@@ -1,0 +1,24 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="header">header</view>
+  <scroll-view
+    wx:if="{{articleGroupList.length}}"
+    scroll-y
+    type="custom"
+    show-scrollbar="{{false}}"
+    class="content"
+  >
+    <sticky-section wx:for="{{articleGroupList}}" wx:for-item="articleGroup" wx:key="name">
+      <sticky-header>
+        <view id="{{articleGroup.name}}">分类：{{articleGroup.name}}</view>
+      </sticky-header>
+      <list-view>
+        <view wx:for="{{articleGroup.list}}" wx:for-item="article" wx:key="_id">
+          <view>{{article.title}}</view>
+          <view>{{article.labels}}</view>
+          <view>{{article.summary}}</view>
+        </view>
+      </list-view>
+    </sticky-section>
+  </scroll-view>
+</view>
