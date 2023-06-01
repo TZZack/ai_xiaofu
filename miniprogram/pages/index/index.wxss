@@ -1,0 +1,23 @@
+/**index.wxss**/
+
+page {
+  padding-top: 0rpx;
+  background-color: red;
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+  overflow: hidden;
+}
+
+.header {
+  font-family: PingFang SC;
+  height: 100rpx;
+}
+
+.content {
+  box-sizing: border-box;
+  height: calc(100% - 100rpx);
+  padding-left: 30rpx;
+}
