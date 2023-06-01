@@ -38,7 +38,8 @@
     "showES6CompileOption": false,
     "useCompilerPlugins": false,
     "minifyWXML": true,
-    "condition": false
+    "condition": false,
+    "skylineRenderEnable": false
   },
   "appid": "wx5cbc4bc34a7f468c",
   "projectname": "quickstart-wx-cloud",
