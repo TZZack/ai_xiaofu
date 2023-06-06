@@ -1,24 +1,45 @@
 <!--index.wxml-->
 <view class="container">
-  <view class="header">header</view>
+  <!-- <view class="header">
+    <t-search model:value="{{keyword}}" placeholder="搜索" class="header-search" shape="round" bind:submit="onSearch" bind:clear="onClear" />
+    <t-tag variant="outline" bindtap="showPicker" class="header-date">{{curDate}}</t-tag>
+    <t-date-time-picker
+        title="选择日期"
+        visible="{{dateVisible}}"
+        mode="date"
+        defaultValue="{{curDate}}"
+        format="YYYY-MM-DD"
+        bindchange="onDateConfirm"
+        bindcancel="hidePicker"
+        start="{{start}}"
+        end="{{end}}"
+    />
+  </view> -->
+  <t-tabs space-evenly="{{false}}" sticky defaultValue="{{defaultType}}" theme="tag" bindchange="typeChange" class="category-wrap">
+    <t-tab-panel wx:for="{{typeList}}" wx:key="index" label="{{item.alias}}" value="{{item.value}}" />
+  </t-tabs>
   <scroll-view
-    wx:if="{{articleGroupList.length}}"
+    wx:if="{{articleList.length}}"
     scroll-y
     type="custom"
+    enhanced
     show-scrollbar="{{false}}"
     class="content"
   >
-    <sticky-section wx:for="{{articleGroupList}}" wx:for-item="articleGroup" wx:key="name">
-      <sticky-header>
-        <view id="{{articleGroup.name}}">分类：{{articleGroup.name}}</view>
-      </sticky-header>
-      <list-view>
-        <view wx:for="{{articleGroup.list}}" wx:for-item="article" wx:key="_id">
-          <view>{{article.title}}</view>
-          <view>{{article.labels}}</view>
-          <view>{{article.summary}}</view>
+    <view wx:for="{{articleList}}" wx:for-item="article" wx:key="_id" class="article-item">
+        <view class="article-title" data-link="{{article.link}}" bindtap="jumpPage">
+            {{article.title}}
         </view>
-      </list-view>
-    </sticky-section>
+        <view class="article-date">{{article.create_time}}</view>
+        <view class="article-labels">
+            <t-tag
+                wx:for="{{article.labels}}"
+                wx:key="item"
+                variant="outline"
+                icon="discount"
+                class="label-item">{{item}}</t-tag>
+        </view>
+        <view class="article-summary">{{article.summary}}</view>
+    </view>
   </scroll-view>
 </view>

@@ -10,12 +10,9 @@ exports.main = async (event, context) => {
   if (!articleList) {
     return null
   }
-  const typeResult = await db.collection('article-types').get()
-  const typeList = typeResult.data
+  const typeList = await db.collection('article-type').get().data
   articleList.forEach(article => {
       article.create_time = article.create_time ? new Date(article.create_time) : new Date()
-      article._id = article.id
-      delete article.id
       const targetType = typeList.find(item => item.alias === article.type)
       if (targetType) {
         article.type = targetType.value
@@ -23,12 +20,10 @@ exports.main = async (event, context) => {
         article.type = 4 // 其他
       }
   })
-
-  try {
-    return await db.collection('articles').add({
-        data: articleList
-    })
-  } catch (e) {
-    return e
+  return {
+    event,
+    openid: wxContext.OPENID,
+    appid: wxContext.APPID,
+    unionid: wxContext.UNIONID,
   }
 }

@@ -1,18 +1,18 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/getOpenId/index",
-    "pages/getMiniProgramCode/index",
-    "pages/deployService/index",
-    "pages/createCollection/index",
-    "pages/uploadFile/index",
-    "pages/selectRecord/index",
-    "pages/updateRecord/index",
-    "pages/updateRecordResult/index",
-    "pages/updateRecordSuccess/index",
-    "pages/sumRecord/index",
-    "pages/sumRecordResult/index"
+    "pages/outer/index"
   ],
+  "usingComponents": {
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "t-tag": "tdesign-miniprogram/tag/tag",
+    "t-search": "tdesign-miniprogram/search/search",
+    "t-date-time-picker": "tdesign-miniprogram/date-time-picker/date-time-picker",
+    "t-tabs": "tdesign-miniprogram/tabs/tabs",
+    "t-tab-panel": "tdesign-miniprogram/tab-panel/tab-panel",
+    "t-tab-bar": "tdesign-miniprogram/tab-bar/tab-bar",
+    "t-tab-bar-item": "tdesign-miniprogram/tab-bar-item/tab-bar-item"
+  },
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
@@ -20,9 +20,5 @@
     "navigationBarTitleText": "AI小服",
     "navigationBarTextStyle": "black"
   },
-  "sitemapLocation": "sitemap.json",
-  "renderer": "skyline",
-  "lazyCodeLoading": "requiredComponents",
-  "style": "v2",
-  "componentFramework": "glass-easel"
+  "sitemapLocation": "sitemap.json"
 }
