@@ -1,12 +1,21 @@
-const { envList } = require('../../envList.js');
+const { encodeDate } = require('../../utils');
+
+const allType = {
+    value: 'all',
+    alias: '全部'
+}
 
 Page({
   data: {
-    showUploadTip: false,
-    envList,
-    selectedEnv: envList[0],
-    haveCreateCollection: false,
-    articleGroupList: []
+    articleList: [],
+    curDate: encodeDate(new Date(), 'Y-m-d'),
+    dateVisible: false,
+    start: '2022-01-01 00:00:00',
+    end: encodeDate(new Date(), 'Y-m-d'),
+    defaultType: allType.value,
+    curType: allType.value,
+    typeList: [],
+    keyword: ''
   },
 
   onLoad() {
@@ -14,107 +23,84 @@ Page({
       title: '',
     });
     wx.cloud.callFunction({
-      name: 'articles',
-      data: {
-        type: 'getList'
-      }
-    }).then(res => {
-      const articleList = res.result.data
-      const articleGroupObj = {}
-      articleList.forEach(article => {
-        if (articleGroupObj[article.type]) {
-          articleGroupObj[article.type].list.push(article)
-        } else {
-          articleGroupObj[article.type] = {
-            name: article.type,
-            list: [article],
-          }
+        name: 'articles',
+        data: {
+            type: 'getTypes'
         }
+    }).then(res => {
+        const data = res.result.data
+        data.unshift({
+            value: allType.value,
+            alias: allType.alias
+        })
+        this.setData({
+            typeList: data
+        })
+    }).catch(err => {
+        console.error(e)
+    })
+    this.getArticleList()
+  },
+
+  // TODO：暂时先隐藏掉关键字和日期这两个检索条件
+  getArticleList() {
+    wx.cloud.callFunction({
+        name: 'articles',
+        data: {
+          type: 'getList',
+        //   keyword: this.data.keyword,
+          category: this.data.curType,
+        //   date: this.data.curDate
+        }
+      }).then(res => {
+        const data = res.result
+        data.forEach(item => {
+            item.labels = item.labels ? item.labels.split(',') : []
+            item.create_time = encodeDate(new Date(item.create_time), 'Y-m-d H:i')
+        })
+        this.setData({
+          articleList: data
+        })
+        wx.hideLoading()
+      }).catch((e) => {
+        wx.hideLoading()
       })
-      this.setData({
-        articleGroupList: Object.values(articleGroupObj),
-      })
-      wx.hideLoading()
-    }).catch((e) => {
-      console.error(e)
-      wx.hideLoading()
+  },
+
+  onSearch() {
+    this.getArticleList()
+  },
+  onClear() {
+    this.getArticleList()
+  },
+
+  typeChange (e) {
+    this.setData({
+        curType: e.detail.value
+    })
+    this.getArticleList()
+  },
+
+  showPicker() {
+    this.setData({
+        dateVisible: true,
     })
   },
-
-  onClickPowerInfo(e) {
-    const index = e.currentTarget.dataset.index;
-    const powerList = this.data.powerList;
-    powerList[index].showItem = !powerList[index].showItem;
-    if (powerList[index].title === '数据库' && !this.data.haveCreateCollection) {
-      this.onClickDatabase(powerList);
-    } else {
-      this.setData({
-        powerList
-      });
-    }
-  },
-
-  onChangeShowEnvChoose() {
-    wx.showActionSheet({
-      itemList: this.data.envList.map(i => i.alias),
-      success: (res) => {
-        this.onChangeSelectedEnv(res.tapIndex);
-      },
-      fail (res) {
-        console.log(res.errMsg);
-      }
-    });
-  },
-
-  onChangeSelectedEnv(index) {
-    if (this.data.selectedEnv.envId === this.data.envList[index].envId) {
-      return;
-    }
-    const powerList = this.data.powerList;
-    powerList.forEach(i => {
-      i.showItem = false;
-    });
+  hidePicker() {
     this.setData({
-      selectedEnv: this.data.envList[index],
-      powerList,
-      haveCreateCollection: false
-    });
+        dateVisible: false,
+    })
+  },
+  onDateConfirm(e) {
+    this.setData({
+        curDate: e.detail.value
+    })
+    this.getArticleList()
   },
 
   jumpPage(e) {
     wx.navigateTo({
-      url: `/pages/${e.currentTarget.dataset.page}/index?envId=${this.data.selectedEnv.envId}`,
-    });
-  },
-
-  onClickDatabase(powerList) {
-    wx.showLoading({
-      title: '',
-    });
-    wx.cloud.callFunction({
-      name: 'quickstartFunctions',
-      config: {
-        env: this.data.selectedEnv.envId
-      },
-      data: {
-        type: 'createCollection'
-      }
-    }).then((resp) => {
-      if (resp.result.success) {
-        this.setData({
-          haveCreateCollection: true
-        });
-      }
-      this.setData({
-        powerList
-      });
-      wx.hideLoading();
-    }).catch((e) => {
-      console.log(e);
-      this.setData({
-        showUploadTip: true
-      });
-      wx.hideLoading();
+      url: `/pages/outer/index?src=${encodeURIComponent(e.currentTarget.dataset.link)}`,
     });
   },
 });

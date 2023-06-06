@@ -24,4 +24,7 @@ page {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  padding-top: 0rpx;
+  height: 100%;
+  width: 100%;
 }
